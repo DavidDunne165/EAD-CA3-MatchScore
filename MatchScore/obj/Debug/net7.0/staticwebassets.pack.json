@@ -1,0 +1,37 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\bin\\Debug\\net7.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\obj\\Debug\\net7.0\\build-gz\\iESUKz0r.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.MatchScore.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.MatchScore.props",
+      "PackagePath": "build\\MatchScore.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.MatchScore.props",
+      "PackagePath": "buildMultiTargeting\\MatchScore.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildTransitive.MatchScore.props",
+      "PackagePath": "buildTransitive\\MatchScore.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

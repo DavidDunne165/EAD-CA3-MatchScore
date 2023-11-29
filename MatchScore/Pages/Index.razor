@@ -1,0 +1,575 @@
+﻿@page "/"
+@inject FootballApiService FootballApiService
+@using MatchScore.Models
+@using MatchScore.Services;
+
+<div class="layout-wrapper">
+    <div class="sidebar">
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <p>@errorMessage</p>
+        }
+        else if (groupedFixtures == null)
+        {
+            <p>Loading...</p>
+        }
+        else if (!groupedFixtures.Any())
+        {
+            <p>No matches found for today.</p>
+        }
+        else
+        {
+            @foreach (var countryGroup in groupedFixtures)
+            {
+                <div class="country-item">
+                    <div class="country-header" @onclick="() => ToggleCountry(countryGroup.Key)">
+                        <img src="@countryGroup.Value.FirstOrDefault()?.League?.Flag" alt="Country Flag" class="country-flag" />
+                        <span class="country-name">@countryGroup.Key</span>
+                    </div>
+                    @if (expandedCountries.TryGetValue(countryGroup.Key, out var isCountryExpanded) && isCountryExpanded)
+                    {
+                        <div class="leagues-container">
+                            @foreach (var leagueGroup in countryGroup.Value.GroupBy(f => f?.League?.Id))
+                            {
+                                var league = leagueGroup.FirstOrDefault()?.League;
+                                if (league != null)
+                                {
+                                    <div class="league-item" @onclick="() => SelectLeague(league.Id)">
+                                        <img src="@league.Logo" alt="League Logo" class="league-logo" />
+                                        <span class="league-name">@league.Name</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+    <div class="content">
+        @if (selectedLeagueId.HasValue)
+        {
+            <button @onclick="ToggleStandings">Show Standings</button>
+            @if (showStandings)
+            {
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Team</th>
+                            <th>Played</th>
+                            <th>GD</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var standing in leagueStandings)
+                        {
+                            <tr>
+                                <td>@standing.Rank</td>
+                                <td>
+                                    <img src="@standing.Team.Logo" alt="@standing.Team.Name" class="team-logo" />
+                                    <span class="team-name">@standing.Team.Name</span>
+                                </td>
+                                <td>@standing.All.Played</td>
+                                <td>@standing.GoalsDiff</td>
+                                <td>@standing.Points</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        }
+        @if (selectedLeagueId.HasValue)
+        {
+            @foreach (var dateGroup in fixturesByDate.OrderBy(kv => kv.Key))
+            {
+                <h3>@dateGroup.Key.ToString("dddd, MMMM dd")</h3>
+                var matchesForSelectedLeagueAndDate = dateGroup.Value
+                .Where(f => f.League.Id == selectedLeagueId.Value)
+                .ToList();
+
+                if (matchesForSelectedLeagueAndDate.Any())
+                {
+                    <table class="matches-table">
+                        <tbody>
+                            @foreach (var match in matchesForSelectedLeagueAndDate)
+                            {
+                                <tr @onclick="() => ToggleMatchDetails(match.Details.Id)" class="@GetRowClass(match)">
+                                    <td class="minute-display">
+                                        @GetMinuteDisplay(match)
+                                    </td>
+                                    <td class="home-team-cell">
+                                        @match.Teams?.Home?.Name
+                                        <img src="@match.Teams?.Home?.Logo" alt="Home Team Logo" />
+                                    </td>
+                                    <td class="score-cell">
+                                        @GetScoreOrTime(match, out var minuteDisplay)
+                                    </td>
+                                    <td class="away-team-cell">
+                                        <img src="@match.Teams?.Away?.Logo" alt="Away Team Logo" />
+                                        @match.Teams?.Away?.Name
+                                    </td>
+                                </tr>
+                                @if (selectedMatchId == match.Details?.Id)
+                                {
+                                    if (matchDetails.TryGetValue(match.Details?.Id ?? -1, out var statsResponse) && statsResponse.Response.Any())
+                                    {
+                                        <tr class="match-details">
+                                            <td colspan="4">
+                                                <div class="team-stats-container">
+                                                    @foreach (var teamStats in statsResponse.Response)
+                                                    {
+                                                        <div class="team-stats @(teamStats.Team?.Id == match.Teams?.Home?.Id ? "home-team" : "away-team")">
+                                                            <img src="@teamStats.Team?.Logo" alt="@teamStats.Team?.Name Logo" />
+                                                            <h5>@teamStats.Team?.Name</h5>
+                                                            @foreach (var stat in teamStats.Statistics)
+                                                            {
+                                                                <p>@stat.Type: @stat.Value</p>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr class="no-stats-message">
+                                            <td colspan="4">
+                                                <p>No statistics available for this match. Please check back later for updates.</p>
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if (lineupDetails.TryGetValue(selectedMatchId, out var lineupResponse) && lineupResponse.Response.Any())
+                                    {
+                                        <div class="lineup-match-details-flex-container">
+                                            @foreach (var lineup in lineupResponse.Response)
+                                            {
+                                                var isHomeTeam = match.Teams.Home.Id == lineup.Team.Id;
+                                                <div class="lineup-match-details-container @(isHomeTeam ? "home-lineup" : "away-lineup")">
+                                                    <img src="@lineup.Team?.Logo" alt="@lineup.Team?.Name Logo" class="team-logo" />
+                                                    <div class="team-lineup-info">
+                                                        <h5>@lineup.Team?.Name</h5>
+                                                        <p>Formation: @lineup.Formation</p>
+                                                        <div class="starting-xi">
+                                                            <h6>Starting XI</h6>
+                                                            @foreach (var player in lineup.StartXI)
+                                                            {
+                                                                <div class="player">
+                                                                    @(isHomeTeam ? $"{player.Player?.Number} - {player.Player?.Name}" : $"{player.Player?.Name} - {player.Player?.Number}")
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <div class="substitutes">
+                                                            <h6>Substitutes</h6>
+                                                            @foreach (var sub in lineup.Substitutes)
+                                                            {
+                                                                <div class="player">
+                                                                    @(isHomeTeam ? $"{sub.Player?.Number} - {sub.Player?.Name}" : $"{sub.Player?.Name} - {sub.Player?.Number}")
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="no-match-message">
+                        <div colspan="4">
+                            <p>No matches scheduled for @dateGroup.Key.ToString("dddd, MMMM dd") in the selected league.</p>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <p>Select a league to view its matches.</p>
+        }
+    </div>
+</div>
+
+
+@code {
+    private Dictionary<string, List<Fixture>> groupedFixtures = new Dictionary<string, List<Fixture>>();
+    private Dictionary<string, bool> expandedCountries = new Dictionary<string, bool>();
+    private Dictionary<(string, int), bool> expandedLeagues = new Dictionary<(string, int), bool>();
+    private Dictionary<int, StatisticsResponse> matchDetails = new Dictionary<int, StatisticsResponse>();
+    private Dictionary<DateTime, List<Fixture>> fixturesByDate = new Dictionary<DateTime, List<Fixture>>();
+    private Dictionary<string, bool> savedExpandedCountries = new Dictionary<string, bool>();
+    private Dictionary<int, LineupsResponse> lineupDetails = new Dictionary<int, LineupsResponse>();
+    private string errorMessage = string.Empty;
+    private Timer? _refreshTimer;
+    private const int RefreshInterval = 60000;
+    private int selectedMatchId = -1;
+    private int? selectedLeagueId = null;
+    private DateTime startDate = DateTime.Today;
+    private DateTime endDate = DateTime.Today.AddDays(6);
+    private bool showStandings = false;
+    private List<Standing> leagueStandings = new List<Standing>();
+    private int currentSeason = 2023;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+        _refreshTimer = new Timer(async _ =>
+        {
+            if (!Monitor.TryEnter(_refreshLock))
+            {
+                return;
+            }
+            try
+            {
+                await RefreshData();
+            }
+            finally
+            {
+                Monitor.Exit(_refreshLock);
+            }
+        }, null, RefreshInterval, RefreshInterval);
+    }
+    private readonly object _refreshLock = new object();
+
+
+    private async Task RefreshData()
+    {
+        SaveExpansionStates();
+
+        try
+        {
+            Console.WriteLine("Refreshing data...");
+            await LoadAndGroupFixtures();
+            await RefreshMatchStatistics();
+            Console.WriteLine("Data refreshed successfully.");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred during data refresh: {ex.Message}";
+            Console.WriteLine(errorMessage);
+        }
+
+        RestoreExpansionStates();
+        await InvokeAsync(StateHasChanged);
+    }
+
+
+    private async Task RefreshFixtures()
+    {
+        await LoadAndGroupFixtures();
+        StateHasChanged();
+    }
+
+    private async Task RefreshMatchStatistics()
+    {
+        var matchIdsToUpdate = expandedLeagues
+            .Where(kv => kv.Value)
+            .SelectMany(kv => groupedFixtures[kv.Key.Item1]
+                .Select(f => f.Details.Id))
+            .Distinct()
+            .ToList();
+
+        bool shouldUpdateUI = false;
+
+        foreach (var matchId in matchIdsToUpdate)
+        {
+            if (!matchDetails.ContainsKey(matchId) || selectedMatchId == matchId)
+            {
+                var statistics = await FootballApiService.GetMatchStatisticsAsync(matchId);
+                if (statistics != null)
+                {
+                    matchDetails[matchId] = statistics;
+                    shouldUpdateUI = true;
+                }
+            }
+        }
+
+        if (shouldUpdateUI)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+
+    private async Task LoadAndGroupFixtures()
+    {
+        try
+        {
+            groupedFixtures.Clear();
+            expandedCountries.Clear();
+            expandedLeagues.Clear();
+            fixturesByDate.Clear(); // Make sure to clear the old grouped data
+
+            var startDate = DateTime.UtcNow.Date;
+            var endDate = startDate.AddDays(6);
+
+            var fixtures = await FootballApiService.GetFixturesByDateRangeAsync(startDate, endDate);
+
+            if (fixtures == null || !fixtures.Any())
+            {
+                errorMessage = "No matches found for the selected period.";
+                return;
+            }
+
+            var leaguesWithMatchesToday = fixtures
+                .Where(f => f.Details.Date.Date == startDate)
+                .Select(f => f.League.Id)
+                .Distinct()
+                .ToList();
+
+            // Group fixtures by date
+            fixturesByDate = fixtures
+                .GroupBy(f => f.Details.Date.Date)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            var fixturesGroupedByCountryAndLeague = fixtures
+                .Where(f => leaguesWithMatchesToday.Contains(f.League.Id))
+                .GroupBy(f => f.League.Country)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.GroupBy(f => f.League.Id)
+                          .Where(lg => leaguesWithMatchesToday.Contains(lg.Key))
+                          .SelectMany(lg => lg)
+                          .ToList()
+                );
+
+            groupedFixtures = fixturesGroupedByCountryAndLeague;
+
+
+            // Sort countries based on priority
+            var priorityCountries = new List<string> { "England", "Spain", "Italy", "Germany", "France", "Ireland", "World" };
+
+            groupedFixtures = groupedFixtures
+                .OrderByDescending(kvp => priorityCountries.Contains(kvp.Key) ? 1 : 0)
+                .ThenBy(kvp => kvp.Key)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            foreach (var country in groupedFixtures.Keys)
+            {
+                expandedCountries[country] = false; // Countries collapsed by default
+                foreach (var league in groupedFixtures[country].Select(f => f.League.Id).Distinct())
+                {
+                    expandedLeagues[(country, league)] = false; // Leagues collapsed by default
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading fixtures: {ex.Message}";
+            Console.WriteLine(errorMessage);
+            groupedFixtures.Clear();
+            expandedCountries.Clear();
+            expandedLeagues.Clear();
+            fixturesByDate.Clear(); // Also clear the date grouping on error
+        }
+    }
+
+
+    private void InitializeExpansionStates()
+    {
+        foreach (var group in groupedFixtures)
+        {
+            expandedCountries[group.Key] = false;
+            foreach (var fixture in group.Value)
+            {
+                if (fixture?.League?.Id != null)
+                {
+                    expandedLeagues[(group.Key, fixture.League.Id)] = false;
+                }
+            }
+        }
+    }
+
+    private async Task RefreshFixtures(object state)
+    {
+        await LoadAndGroupFixtures();
+        StateHasChanged();
+    }
+
+    private void ToggleCountry(string country)
+    {
+        if (expandedCountries.ContainsKey(country))
+        {
+            expandedCountries[country] = !expandedCountries[country];
+        }
+        else
+        {
+            expandedCountries.Add(country, true);
+        }
+    }
+
+    private void ToggleLeague(string country, int leagueId)
+    {
+        SelectLeague(leagueId);
+    }
+
+
+    private string GetIndicator(bool isExpanded)
+    {
+        return isExpanded ? "▼" : "►";
+    }
+
+    private string GetScoreOrTime(Fixture fixture, out string minuteDisplay)
+    {
+        minuteDisplay = string.Empty;
+
+        if (fixture?.Details?.Date > DateTime.UtcNow)
+        {
+            return fixture.Details.Date.ToString("HH:mm");
+        }
+        else if (fixture?.Details?.Status?.Short == "1H" || fixture?.Details?.Status?.Short == "2H" || fixture?.Details?.Status?.Short == "HT")
+        {
+            minuteDisplay = $"({fixture.Details?.Status?.Elapsed}') ";
+            return $"{fixture.Goals?.Home}-{fixture.Goals?.Away}";
+        }
+        else if (fixture?.Details?.Status?.Short == "FT")
+        {
+            return $"{fixture.Score?.Fulltime?.Home}-{fixture.Score?.Fulltime?.Away}";
+        }
+        else
+        {
+            return "TBD";
+        }
+    }
+
+    private string GetMinuteDisplay(Fixture fixture)
+    {
+        if (fixture?.Details?.Status?.Short == "1H" || fixture?.Details?.Status?.Short == "2H" || fixture?.Details?.Status?.Short == "HT")
+        {
+            return $"{fixture.Details?.Status?.Elapsed}'";
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    public void Dispose()
+    {
+        _refreshTimer?.Dispose();
+    }
+
+    private async Task ToggleMatchDetails(int matchId)
+    {
+        if (selectedMatchId == matchId)
+        {
+            selectedMatchId = -1;
+        }
+        else
+        {
+            selectedMatchId = matchId;
+            if (!matchDetails.ContainsKey(matchId))
+            {
+                var statistics = await FootballApiService.GetMatchStatisticsAsync(matchId);
+                if (statistics != null)
+                {
+                    matchDetails[matchId] = statistics;
+                }
+            }
+            if (!lineupDetails.ContainsKey(matchId))
+            {
+                var lineups = await FootballApiService.GetMatchLineupsAsync(matchId);
+                if (lineups != null)
+                {
+                    lineupDetails[matchId] = lineups;
+                }
+            }
+        }
+        StateHasChanged();
+    }
+
+
+    private async Task SelectLeague(int leagueId)
+    {
+        selectedLeagueId = leagueId;
+        selectedMatchId = -1;
+        await LoadLeagueStandings(leagueId, currentSeason);
+        StateHasChanged();
+    }
+
+    private string GetRowClass(Fixture fixture)
+    {
+        return selectedMatchId == fixture.Details?.Id ? "selected-match" : "";
+    }
+    private List<Fixture> GetFixturesForSelectedLeagueAndDateRange()
+    {
+        if (!selectedLeagueId.HasValue) return new List<Fixture>();
+
+        return groupedFixtures
+            .SelectMany(kv => kv.Value)
+            .Where(f => f.League.Id == selectedLeagueId.Value
+                        && f.Details.Date >= startDate
+                        && f.Details.Date <= endDate)
+            .OrderBy(f => f.Details)
+            .ToList();
+    }
+
+    private void SaveExpansionStates()
+    {
+        savedExpandedCountries.Clear();
+
+        foreach (var country in expandedCountries)
+        {
+            savedExpandedCountries[country.Key] = country.Value;
+        }
+    }
+
+    private void RestoreExpansionStates()
+    {
+        foreach (var country in savedExpandedCountries.Keys)
+        {
+            if (expandedCountries.ContainsKey(country))
+            {
+                expandedCountries[country] = savedExpandedCountries[country];
+            }
+            else
+            {
+                expandedCountries[country] = false;
+            }
+        }
+    }
+
+    private async Task LoadLeagueStandings(int leagueId, int season)
+    {
+        var standingsResponse = await FootballApiService.GetLeagueStandingsAsync(leagueId, season);
+        if (standingsResponse != null && standingsResponse.Any())
+        {
+            leagueStandings = standingsResponse.First().League.Standings.FirstOrDefault() ?? new List<Standing>();
+        }
+        else
+        {
+            leagueStandings.Clear();
+        }
+    }
+
+    private void ToggleStandings()
+    {
+        showStandings = !showStandings;
+    }
+
+    private string GetAlignmentClass(int teamId, Fixture match)
+    {
+        return match.Teams?.Home?.Id == teamId ? "align-left" : "align-right";
+    }
+
+    private string GetPlayerListing(LineupPlayer player, int teamId, Fixture match)
+    {
+        if (match.Teams?.Home?.Id == teamId)
+        {
+            return $"{player.Player?.Number} - {player.Player?.Name}";
+        }
+        else
+        {
+            return $"{player.Player?.Name} - {player.Player?.Number}";
+        }
+    }
+
+}
