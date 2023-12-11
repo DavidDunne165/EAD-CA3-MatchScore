@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Jmz6p85s9Pcr3aPCrMXwaoZmS6ztN5AVMTHfNbdBcMxI+ApzvwRG85fbSKxH1S1G6BOjfI7W4DL6PMLJl1W4vQ==",
+  "dgSpecHash": "ub1Dj0yPzwxnt2B27CRbQmTyL6BODKmJJxRJLwb+v9ABmAsQumghEZrkkq+HQaka8Pge97dMVblAbe84/ccnLg==",
   "success": true,
   "projectFilePath": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\MatchScore.csproj",
   "expectedPackageFiles": [
@@ -29,6 +29,9 @@
     "C:\\Users\\David\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\David\\.nuget\\packages\\microsoft.jsinterop\\7.0.14\\microsoft.jsinterop.7.0.14.nupkg.sha512",
     "C:\\Users\\David\\.nuget\\packages\\microsoft.jsinterop.webassembly\\7.0.14\\microsoft.jsinterop.webassembly.7.0.14.nupkg.sha512",
+    "C:\\Users\\David\\.nuget\\packages\\microsoft.net.illink.analyzers\\7.0.100-1.23211.1\\microsoft.net.illink.analyzers.7.0.100-1.23211.1.nupkg.sha512",
+    "C:\\Users\\David\\.nuget\\packages\\microsoft.net.illink.tasks\\7.0.100-1.23211.1\\microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512",
+    "C:\\Users\\David\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\8.0.0\\microsoft.net.sdk.webassembly.pack.8.0.0.nupkg.sha512",
     "C:\\Users\\David\\.nuget\\packages\\system.io.pipelines\\7.0.0\\system.io.pipelines.7.0.0.nupkg.sha512",
     "C:\\Users\\David\\.nuget\\packages\\system.text.encodings.web\\7.0.0\\system.text.encodings.web.7.0.0.nupkg.sha512",
     "C:\\Users\\David\\.nuget\\packages\\system.text.json\\7.0.0\\system.text.json.7.0.0.nupkg.sha512",

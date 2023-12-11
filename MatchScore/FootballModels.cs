@@ -227,7 +227,7 @@ namespace MatchScore.Models
     public class Player
     {
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [JsonPropertyName("name")]
         public string? Name { get; set; }
@@ -254,8 +254,16 @@ namespace MatchScore.Models
         public string? Photo { get; set; }
     }
 
+    public class FavouriteClub
+    {
+        [JsonPropertyName("clubId")]
+        public int? ClubId { get; set; }
 
-    public class League
+        [JsonPropertyName("clubName")]
+        public string? ClubName { get; set; }
+    }
+
+        public class League
     {
         public int Id { get; set; }
         public string? Name { get; set; }

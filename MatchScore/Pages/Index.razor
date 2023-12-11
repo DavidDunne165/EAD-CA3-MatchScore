@@ -2,6 +2,9 @@
 @inject FootballApiService FootballApiService
 @using MatchScore.Models
 @using MatchScore.Services;
+@using System.Threading;
+@using System.Threading.Tasks;
+
 
 <div class="layout-wrapper">
     <div class="sidebar">
@@ -11,14 +14,17 @@
         }
         else if (groupedFixtures == null)
         {
-            <p>Loading...</p>
+            <div class="spinner"></div>
         }
         else if (!groupedFixtures.Any())
         {
-            <p>No matches found for today.</p>
+            <div class="spinner"></div>
         }
         else
         {
+            <div class="favourites-header" @onclick="LoadFavouriteClubFixtures">
+                <h3>Favourites</h3>
+            </div>  
             @foreach (var countryGroup in groupedFixtures)
             {
                 <div class="country-item">
@@ -47,153 +53,300 @@
         }
     </div>
     <div class="content">
-        @if (selectedLeagueId.HasValue)
-        {
-            <button @onclick="ToggleStandings">Show Standings</button>
-            @if (showStandings)
+        @if (!showingFavourites) {
+            @if (selectedLeagueId.HasValue && !showingFavourites)
             {
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Team</th>
-                            <th>Played</th>
-                            <th>GD</th>
-                            <th>Points</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var standing in leagueStandings)
-                        {
-                            <tr>
-                                <td>@standing.Rank</td>
-                                <td>
-                                    <img src="@standing.Team.Logo" alt="@standing.Team.Name" class="team-logo" />
-                                    <span class="team-name">@standing.Team.Name</span>
-                                </td>
-                                <td>@standing.All.Played</td>
-                                <td>@standing.GoalsDiff</td>
-                                <td>@standing.Points</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        }
-        @if (selectedLeagueId.HasValue)
-        {
-            @foreach (var dateGroup in fixturesByDate.OrderBy(kv => kv.Key))
-            {
-                <h3>@dateGroup.Key.ToString("dddd, MMMM dd")</h3>
-                var matchesForSelectedLeagueAndDate = dateGroup.Value
-                .Where(f => f.League.Id == selectedLeagueId.Value)
-                .ToList();
-
-                if (matchesForSelectedLeagueAndDate.Any())
+                <div class="toggle-bar" @onclick="ToggleStandings">
+                    <span>@($"{(showStandings ? "▼" : "►")} Show Standings")</span>
+                </div>
+                @if (showStandings)
                 {
-                    <table class="matches-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Played</th>
+                                <th>GD</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            @foreach (var match in matchesForSelectedLeagueAndDate)
+                            @foreach (var standing in leagueStandings)
                             {
-                                <tr @onclick="() => ToggleMatchDetails(match.Details.Id)" class="@GetRowClass(match)">
-                                    <td class="minute-display">
-                                        @GetMinuteDisplay(match)
+                                <tr>
+                                    <td>@standing.Rank</td>
+                                    <td>
+                                        <img src="@standing?.Team?.Logo" alt="@standing?.Team?.Name" class="team-logo" />
+                                        <span class="team-name">@standing?.Team?.Name</span>
                                     </td>
-                                    <td class="home-team-cell">
-                                        @match.Teams?.Home?.Name
-                                        <img src="@match.Teams?.Home?.Logo" alt="Home Team Logo" />
-                                    </td>
-                                    <td class="score-cell">
-                                        @GetScoreOrTime(match, out var minuteDisplay)
-                                    </td>
-                                    <td class="away-team-cell">
-                                        <img src="@match.Teams?.Away?.Logo" alt="Away Team Logo" />
-                                        @match.Teams?.Away?.Name
-                                    </td>
+                                    <td>@standing?.All?.Played</td>
+                                    <td>@standing?.GoalsDiff</td>
+                                    <td>@standing?.Points</td>
                                 </tr>
-                                @if (selectedMatchId == match.Details?.Id)
-                                {
-                                    if (matchDetails.TryGetValue(match.Details?.Id ?? -1, out var statsResponse) && statsResponse.Response.Any())
-                                    {
-                                        <tr class="match-details">
-                                            <td colspan="4">
-                                                <div class="team-stats-container">
-                                                    @foreach (var teamStats in statsResponse.Response)
-                                                    {
-                                                        <div class="team-stats @(teamStats.Team?.Id == match.Teams?.Home?.Id ? "home-team" : "away-team")">
-                                                            <img src="@teamStats.Team?.Logo" alt="@teamStats.Team?.Name Logo" />
-                                                            <h5>@teamStats.Team?.Name</h5>
-                                                            @foreach (var stat in teamStats.Statistics)
-                                                            {
-                                                                <p>@stat.Type: @stat.Value</p>
-                                                            }
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        <tr class="no-stats-message">
-                                            <td colspan="4">
-                                                <p>No statistics available for this match. Please check back later for updates.</p>
-                                            </td>
-                                        </tr>
-                                    }
-                                    @if (lineupDetails.TryGetValue(selectedMatchId, out var lineupResponse) && lineupResponse.Response.Any())
-                                    {
-                                        <div class="lineup-match-details-flex-container">
-                                            @foreach (var lineup in lineupResponse.Response)
-                                            {
-                                                var isHomeTeam = match.Teams.Home.Id == lineup.Team.Id;
-                                                <div class="lineup-match-details-container @(isHomeTeam ? "home-lineup" : "away-lineup")">
-                                                    <img src="@lineup.Team?.Logo" alt="@lineup.Team?.Name Logo" class="team-logo" />
-                                                    <div class="team-lineup-info">
-                                                        <h5>@lineup.Team?.Name</h5>
-                                                        <p>Formation: @lineup.Formation</p>
-                                                        <div class="starting-xi">
-                                                            <h6>Starting XI</h6>
-                                                            @foreach (var player in lineup.StartXI)
-                                                            {
-                                                                <div class="player">
-                                                                    @(isHomeTeam ? $"{player.Player?.Number} - {player.Player?.Name}" : $"{player.Player?.Name} - {player.Player?.Number}")
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                        <div class="substitutes">
-                                                            <h6>Substitutes</h6>
-                                                            @foreach (var sub in lineup.Substitutes)
-                                                            {
-                                                                <div class="player">
-                                                                    @(isHomeTeam ? $"{sub.Player?.Number} - {sub.Player?.Name}" : $"{sub.Player?.Name} - {sub.Player?.Number}")
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-                                    }
-
-                                }
                             }
                         </tbody>
                     </table>
                 }
-                else
+            }
+            @if (selectedLeagueId.HasValue && !showingFavourites)
+            {
+                @foreach (var fixtureDateGroup in leagueFixturesByDate.OrderBy(kv => kv.Key))
                 {
-                    <div class="no-match-message">
-                        <div colspan="4">
-                            <p>No matches scheduled for @dateGroup.Key.ToString("dddd, MMMM dd") in the selected league.</p>
+                    <h3 class="fixture-date">@fixtureDateGroup.Key.ToString("dddd, MMMM dd")</h3>
+                    var matchesForSelectedLeagueAndDate = fixtureDateGroup.Value
+                    .Where(f => f.League?.Id == selectedLeagueId.Value)
+                    .ToList();
+
+                    if (matchesForSelectedLeagueAndDate.Any())
+                    {
+                        <table class="matches-table">
+                            <tbody>
+                                @foreach (var match in matchesForSelectedLeagueAndDate)
+                                {
+                                    <tr @onclick="() => ToggleMatchDetails(match.Details.Id)" class="@GetRowClass(match)">
+                                        <td class="minute-display">
+                                            @GetMinuteDisplay(match)
+                                        </td>
+                                        <td class="home-team-cell">
+                                            @match.Teams?.Home?.Name
+                                            <img src="@match.Teams?.Home?.Logo" alt="Home Team Logo" />
+                                            <button @onclick="() => AddToFavourite(match.Teams?.Home)" class="favourite-button">
+                                                <i class="@GetStarClass(match.Teams?.Home)"></i>
+                                            </button>
+                                        </td>
+                                        <td class="score-cell">
+                                            @GetScoreOrTime(match, out var minuteDisplay)
+                                        </td>
+                                        <td class="away-team-cell">
+                                            <button @onclick="() => AddToFavourite(match.Teams?.Away)" class="favourite-button">
+                                                <i class="@GetStarClass(match.Teams?.Away)"></i>
+                                            </button>
+                                            <img src="@match.Teams?.Away?.Logo" alt="Away Team Logo" />
+                                            @match.Teams?.Away?.Name
+                                        </td>
+                                    </tr>
+                                    @if (selectedMatchId == match.Details?.Id)
+                                    {
+                                        <tr class="match-details">
+                                            <td colspan="4">
+                                                <div class="toggle-bar" @onclick="() => ToggleLineups(match.Details.Id)">
+                                                    <span>@($"{(lineupsVisible ? "▼" : "►")} Show Lineup")</span>
+                                                </div>
+                                                @if (lineupsVisible)
+                                                {
+                                                    <div class="lineup-match-details-flex-container">
+                                                        @if (lineupDetails.TryGetValue(match.Details?.Id ?? -1, out var lineupResponse) && lineupResponse.Response.Any())
+                                                        {
+                                                            @foreach (var lineup in lineupResponse.Response)
+                                                            {
+                                                                <div class="lineup-match-details-container @(match?.Teams?.Home?.Id == lineup?.Team?.Id ? "home-lineup" : "away-lineup")">
+                                                                    <img src="@lineup?.Team?.Logo" alt="@lineup?.Team?.Name Logo" class="team-logo" />
+                                                                    <div class="team-lineup-info">
+                                                                        <h5>@lineup?.Team?.Name</h5>
+                                                                        <p>Formation: @lineup?.Formation</p>
+                                                                        <div class="starting-xi">
+                                                                            <h6>Starting XI</h6>
+                                                                            @foreach (var player in lineup.StartXI)
+                                                                            {
+                                                                                <div class="player">
+                                                                                    @(match.Teams.Home.Id == lineup.Team.Id ? $"{player.Player?.Number} - {player.Player?.Name}" : $"{player.Player?.Name} - {player.Player?.Number}")
+                                                                                </div>
+                                                                            }
+                                                                        </div>
+                                                                        <div class="substitutes">
+                                                                            <h6>Substitutes</h6>
+                                                                            @foreach (var sub in lineup.Substitutes)
+                                                                            {
+                                                                                <div class="player">
+                                                                                    @(match.Teams.Home.Id == lineup.Team.Id ? $"{sub.Player?.Number} - {sub.Player?.Name}" : $"{sub.Player?.Name} - {sub.Player?.Number}")
+                                                                                </div>
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="no-data-message">No lineups available for this match. Please check back later for updates.</p>
+                                                        }
+                                                    </div>
+                                                }
+                                                <div class="toggle-bar" @onclick="() => ToggleStatistics(match.Details.Id)">
+                                                    <span>@($"{(statsVisible ? "▼" : "►")} Show Statistics")</span>
+                                                </div>
+                                                @if (statsVisible)
+                                                {
+                                                    <div class="team-stats-container">
+                                                        @if (matchDetails.TryGetValue(match.Details?.Id ?? -1, out var statsResponse) && statsResponse.Response.Any())
+                                                        {
+                                                            @foreach (var teamStats in statsResponse.Response)
+                                                            {
+                                                                <div class="team-stats @(teamStats.Team?.Id == match.Teams?.Home?.Id ? "home-team" : "away-team")">
+                                                                    <img src="@teamStats.Team?.Logo" alt="@teamStats.Team?.Name Logo" />
+                                                                    <h5>@teamStats.Team?.Name</h5>
+                                                                    @foreach (var stat in teamStats.Statistics)
+                                                                    {
+                                                                        <p>@stat.Type<br>@stat.Value</p>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="no-data-message">No statistics available for this match. Please check back later for updates.</p>
+                                                        }
+                                                    </div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="no-match-message">
+                            <div colspan="4">
+                                <p>No matches scheduled for @fixtureDateGroup.Key.ToString("dddd, MMMM dd") in the selected league.</p>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
             }
+            else
+            {
+                <p class="centered-text">Select a league to view its matches.</p>
+            }
         }
-        else
-        {
-            <p>Select a league to view its matches.</p>
+        else {
+            @if (showingFavourites)
+            {
+                @foreach (var fixtureDateGroup in favouriteFixturesByDate.OrderBy(kv => kv.Key))
+                {
+                    <h3 class="fixture-date">@fixtureDateGroup.Key.ToString("dddd, MMMM dd")</h3>
+                    var favouriteClubIds = FavouriteClubs.Select(fc => fc.ClubId).ToList();
+
+                    var matchesForFavouriteClubs = fixtureDateGroup.Value
+                    .Where(fixture => favouriteClubIds.Contains(fixture.Teams?.Home?.Id) ||
+                    favouriteClubIds.Contains(fixture.Teams?.Away?.Id))
+                    .ToList();
+                    if (matchesForFavouriteClubs.Any())
+                    {
+                        <table class="matches-table">
+                            <tbody>
+                                @foreach (var match in matchesForFavouriteClubs)
+                                {
+                                    <tr @onclick="() => ToggleMatchDetails(match.Details.Id)" class="@GetRowClass(match)">
+                                        <td class="minute-display">
+                                            @GetMinuteDisplay(match)
+                                        </td>
+                                        <td class="home-team-cell">
+                                            @match.Teams?.Home?.Name
+                                            <img src="@match.Teams?.Home?.Logo" alt="Home Team Logo" />
+                                        </td>
+                                        <td class="score-cell">
+                                            @GetScoreOrTime(match, out var minuteDisplay)
+                                        </td>
+                                        <td class="away-team-cell">
+                                            <img src="@match.Teams?.Away?.Logo" alt="Away Team Logo" />
+                                            @match.Teams?.Away?.Name
+                                        </td>
+                                    </tr>
+                                    @if (selectedMatchId == match.Details?.Id)
+                                    {
+                                        <tr class="match-details">
+                                            <td colspan="4">
+                                                <div class="toggle-bar" @onclick="() => ToggleLineups(match.Details.Id)">
+                                                    <span>@($"{(lineupsVisible ? "▼" : "►")} Show Lineup")</span>
+                                                </div>
+                                                @if (lineupsVisible)
+                                                {
+                                                    <div class="lineup-match-details-flex-container">
+                                                        @if (lineupDetails.TryGetValue(match.Details?.Id ?? -1, out var lineupResponse) && lineupResponse.Response.Any())
+                                                        {
+                                                            @foreach (var lineup in lineupResponse.Response)
+                                                            {
+                                                                <div class="lineup-match-details-container @(match?.Teams?.Home?.Id == lineup?.Team?.Id ? "home-lineup" : "away-lineup")">
+                                                                    <img src="@lineup?.Team?.Logo" alt="@lineup?.Team?.Name Logo" class="team-logo" />
+                                                                    <div class="team-lineup-info">
+                                                                        <h5>@lineup?.Team?.Name</h5>
+                                                                        <p>Formation: @lineup?.Formation</p>
+                                                                        <div class="starting-xi">
+                                                                            <h6>Starting XI</h6>
+                                                                            @foreach (var player in lineup.StartXI)
+                                                                            {
+                                                                                <div class="player">
+                                                                                    @(match.Teams.Home.Id == lineup.Team.Id ? $"{player.Player?.Number} - {player.Player?.Name}" : $"{player.Player?.Name} - {player.Player?.Number}")
+                                                                                </div>
+                                                                            }
+                                                                        </div>
+                                                                        <div class="substitutes">
+                                                                            <h6>Substitutes</h6>
+                                                                            @foreach (var sub in lineup.Substitutes)
+                                                                            {
+                                                                                <div class="player">
+                                                                                    @(match.Teams.Home.Id == lineup.Team.Id ? $"{sub.Player?.Number} - {sub.Player?.Name}" : $"{sub.Player?.Name} - {sub.Player?.Number}")
+                                                                                </div>
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="no-data-message">No lineups available for this match. Please check back later for updates.</p>
+                                                        }
+                                                    </div>
+                                                }
+                                                <div class="toggle-bar" @onclick="() => ToggleStatistics(match.Details.Id)">
+                                                    <span>@($"{(statsVisible ? "▼" : "►")} Show Statistics")</span>
+                                                </div>
+                                                @if (statsVisible)
+                                                {
+                                                    <div class="team-stats-container">
+                                                        @if (matchDetails.TryGetValue(match.Details?.Id ?? -1, out var statsResponse) && statsResponse.Response.Any())
+                                                        {
+                                                            @foreach (var teamStats in statsResponse.Response)
+                                                            {
+                                                                <div class="team-stats @(teamStats.Team?.Id == match.Teams?.Home?.Id ? "home-team" : "away-team")">
+                                                                    <img src="@teamStats.Team?.Logo" alt="@teamStats.Team?.Name Logo" />
+                                                                    <h5>@teamStats.Team?.Name</h5>
+                                                                    @foreach (var stat in teamStats.Statistics)
+                                                                    {
+                                                                        <p>@stat.Type<br>@stat.Value</p>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="no-data-message">No statistics available for this match. Please check back later for updates.</p>
+                                                        }
+                                                    </div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="no-match-message">
+                            <p>No matches scheduled for @fixtureDateGroup.Key.ToString("dddd, MMMM dd") for your favorite clubs.</p>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <p>Select a league to view its matches or add clubs to favorites to view their fixtures.</p>
+            }
         }
     </div>
 </div>
@@ -217,27 +370,24 @@
     private bool showStandings = false;
     private List<Standing> leagueStandings = new List<Standing>();
     private int currentSeason = 2023;
+    private bool statsVisible = true;
+    private bool lineupsVisible = false;
+    private List<FavouriteClub> FavouriteClubs = new List<FavouriteClub>();
+    private bool showAddFavouriteClubModal = false;
+    private bool showingFavourites = false;
+    private Dictionary<DateTime, List<Fixture>> favouriteFixturesByDate = new Dictionary<DateTime, List<Fixture>>();
+    private Dictionary<DateTime, List<Fixture>> leagueFixturesByDate = new Dictionary<DateTime, List<Fixture>>();
+    private DateTime _lastDataUpdateTime = DateTime.MinValue;
+
 
 
     protected override async Task OnInitializedAsync()
     {
-        await RefreshData();
-        _refreshTimer = new Timer(async _ =>
-        {
-            if (!Monitor.TryEnter(_refreshLock))
-            {
-                return;
-            }
-            try
-            {
-                await RefreshData();
-            }
-            finally
-            {
-                Monitor.Exit(_refreshLock);
-            }
-        }, null, RefreshInterval, RefreshInterval);
+        await RefreshDataIfNeeded();
+        _refreshTimer = new Timer(Callback, null, RefreshInterval, RefreshInterval);
     }
+
+
     private readonly object _refreshLock = new object();
 
 
@@ -248,7 +398,8 @@
         try
         {
             Console.WriteLine("Refreshing data...");
-            await LoadAndGroupFixtures();
+            await LoadAndGroupFixtures(); // Call the method without assigning its result to a variable
+            UpdateElapsedTimes(); // Call your method to update elapsed times
             await RefreshMatchStatistics();
             Console.WriteLine("Data refreshed successfully.");
         }
@@ -262,6 +413,23 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    private void UpdateElapsedTimes()
+    {
+        var now = DateTime.UtcNow;
+        foreach (var fixturesOnDate in fixturesByDate.Values)
+        {
+            foreach (var fixture in fixturesOnDate)
+            {
+                // Only update if the match is currently in the first or second half.
+                if (fixture.Details.Status.Short == "1H" || fixture.Details.Status.Short == "2H")
+                {
+                    var matchStartTime = fixture.Details.Date.ToUniversalTime();
+                    var elapsed = (int)(now - matchStartTime).TotalMinutes;
+                    fixture.Details.Status.Elapsed = elapsed;
+                }
+            }
+        }
+    }
 
     private async Task RefreshFixtures()
     {
@@ -299,6 +467,22 @@
         }
     }
 
+    private async void Callback(object? state)
+    {
+        await RefreshDataIfNeeded();
+    }
+
+    private async Task RefreshDataIfNeeded()
+    {
+        if ((DateTime.UtcNow - _lastDataUpdateTime).TotalMinutes >= 5)
+        {
+            await RefreshData();
+            _lastDataUpdateTime = DateTime.UtcNow;
+        }
+    }
+
+    private DateTime _lastRefreshTime = DateTime.MinValue;
+
 
     private async Task LoadAndGroupFixtures()
     {
@@ -307,17 +491,25 @@
             groupedFixtures.Clear();
             expandedCountries.Clear();
             expandedLeagues.Clear();
-            fixturesByDate.Clear(); // Make sure to clear the old grouped data
+            fixturesByDate.Clear();
 
             var startDate = DateTime.UtcNow.Date;
             var endDate = startDate.AddDays(6);
 
             var fixtures = await FootballApiService.GetFixturesByDateRangeAsync(startDate, endDate);
 
-            if (fixtures == null || !fixtures.Any())
+            if (!groupedFixtures.Any())
             {
-                errorMessage = "No matches found for the selected period.";
-                return;
+                var startDateLocal = DateTime.UtcNow.Date;
+                var endDateLocal = startDateLocal.AddDays(6);
+
+                var fixturesLocal = await FootballApiService.GetFixturesByDateRangeAsync(startDateLocal, endDateLocal);
+                if (fixturesLocal == null || !fixturesLocal.Any())
+                {
+                    errorMessage = "No matches found for the selected period.";
+                    return;
+                }
+
             }
 
             var leaguesWithMatchesToday = fixtures
@@ -411,12 +603,6 @@
         SelectLeague(leagueId);
     }
 
-
-    private string GetIndicator(bool isExpanded)
-    {
-        return isExpanded ? "▼" : "►";
-    }
-
     private string GetScoreOrTime(Fixture fixture, out string minuteDisplay)
     {
         minuteDisplay = string.Empty;
@@ -486,13 +672,17 @@
         StateHasChanged();
     }
 
-
     private async Task SelectLeague(int leagueId)
     {
-        selectedLeagueId = leagueId;
-        selectedMatchId = -1;
-        await LoadLeagueStandings(leagueId, currentSeason);
-        StateHasChanged();
+        if (selectedLeagueId != leagueId)
+        {
+            selectedLeagueId = leagueId;
+            showingFavourites = false;
+            selectedMatchId = -1;
+            favouriteFixturesByDate.Clear();
+            await LoadLeagueFixtures();
+            StateHasChanged();
+        }
     }
 
     private string GetRowClass(Fixture fixture)
@@ -550,6 +740,7 @@
         }
     }
 
+
     private void ToggleStandings()
     {
         showStandings = !showStandings;
@@ -570,6 +761,115 @@
         {
             return $"{player.Player?.Name} - {player.Player?.Number}";
         }
+    }
+
+    private void ToggleStatistics(int matchId)
+    {
+        if (selectedMatchId == matchId)
+        {
+            statsVisible = !statsVisible;
+            if (statsVisible)
+            {
+                lineupsVisible = false;
+            }
+        }
+    }
+
+    private void ToggleLineups(int matchId)
+    {
+        if (selectedMatchId == matchId)
+        {
+            lineupsVisible = !lineupsVisible;
+            if (lineupsVisible)
+            {
+                statsVisible = false;
+            }
+        }
+    }
+
+    private async Task LoadFavouriteClubFixtures()
+    {
+        showingFavourites = true;
+        selectedLeagueId = null;
+        leagueFixturesByDate.Clear();
+        await LoadFavouriteFixtures();
+        StateHasChanged();
+    }
+
+
+    private async Task ToggleFavouritesView()
+    {
+        showingFavourites = !showingFavourites;
+        if (showingFavourites)
+        {
+            selectedLeagueId = null;
+            selectedMatchId = -1;
+            await LoadFavouriteClubFixtures();
+        }
+        StateHasChanged();
+    }
+
+    private void ShowAddFavouriteClubModal()
+    {
+        showAddFavouriteClubModal = true;
+    }
+
+    private void HideAddFavouriteClubModal()
+    {
+        showAddFavouriteClubModal = false;
+    }
+
+    private void AddToFavourite(Team team)
+    {
+        if (team is null) return;
+
+        var existingClub = FavouriteClubs.FirstOrDefault(c => c.ClubId == team.Id);
+        if (existingClub == null)
+        {
+            FavouriteClubs.Add(new FavouriteClub { ClubId = team.Id, ClubName = team.Name });
+        }
+    }
+
+    private async Task LoadFavouriteFixtures()
+    {
+        favouriteFixturesByDate.Clear();
+        var favouriteClubIds = FavouriteClubs.Select(fc => fc.ClubId).ToList();
+
+        var startDate = DateTime.Today;
+        var endDate = startDate.AddDays(6);
+        var allFixtures = await FootballApiService.GetFixturesByDateRangeAsync(startDate, endDate);
+
+        favouriteFixturesByDate = allFixtures
+            .Where(fixture => favouriteClubIds.Contains(fixture.Teams?.Home?.Id ?? -1) ||
+                              favouriteClubIds.Contains(fixture.Teams?.Away?.Id ?? -1))
+            .GroupBy(f => f.Details.Date.Date)
+            .ToDictionary(g => g.Key, g => g.ToList());
+    }
+
+    private async Task LoadLeagueFixtures()
+    {
+        leagueFixturesByDate.Clear();
+        if (selectedLeagueId.HasValue)
+        {
+            var startDate = DateTime.Today;
+            var endDate = startDate.AddDays(6);
+            var fixtures = await FootballApiService.GetFixturesByDateRangeAsync(startDate, endDate);
+
+            leagueFixturesByDate = fixtures
+                .Where(f => f.League.Id == selectedLeagueId.Value)
+                .GroupBy(f => f.Details.Date.Date)
+                .ToDictionary(g => g.Key, g => g.ToList());
+        }
+    }
+
+    private bool IsFavourite(Team team)
+    {
+        return FavouriteClubs.Any(f => f.ClubId == team?.Id);
+    }
+
+    private string GetStarClass(Team team)
+    {
+        return FavouriteClubs.Any(fc => fc.ClubId == team?.Id) ? "fas fa-star favourite-star" : "far fa-star";
     }
 
 }
