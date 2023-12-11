@@ -104,5 +104,24 @@ namespace MatchScore.Services
                 return null;
             }
         }
+
+        public async Task<List<Fixture>> GetFixturesByClubAsync(int clubId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<FixtureResponse>($"https://api-football-v1.p.rapidapi.com/v3/fixtures?team={clubId}");
+                if (response?.Response != null)
+                {
+                    return response.Response;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"An error occurred fetching fixtures for club {clubId}: {ex.Message}");
+            }
+
+            return new List<Fixture>();
+        }
+
     }
 }
