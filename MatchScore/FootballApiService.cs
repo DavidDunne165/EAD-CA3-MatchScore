@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MatchScore.Models;
 
@@ -123,5 +124,23 @@ namespace MatchScore.Services
             return new List<Fixture>();
         }
 
+        public async Task<List<MatchEvent>> GetMatchEventsAsync(int matchId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<MatchEventResponse>($"https://api-football-v1.p.rapidapi.com/v3/fixtures/events?fixture={matchId}");
+                if (response?.Response != null)
+                {
+                    return response.Response;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"An error occurred fetching match events: {ex.Message}");
+            }
+
+            Console.WriteLine($"An error occurred fetching match events");
+            return new List<MatchEvent>();
+        }
     }
 }

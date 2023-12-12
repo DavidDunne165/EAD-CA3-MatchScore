@@ -19,5 +19,4 @@ builder.Services.AddHttpClient<FootballApiService>(client =>
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-
 await builder.Build().RunAsync();
