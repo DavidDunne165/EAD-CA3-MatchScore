@@ -1,7 +1,7 @@
 {
   "entryAssembly": "MatchScore",
   "resources": {
-    "hash": "sha256-UyJyJ7U9b7gvoA9cVJrjFxYqbR20h2VOEE9J8AhzYns=",
+    "hash": "sha256-OeS3c4WCSjpfhAvIMaiUJJB5SrneaOdIkGjKIgQNvnk=",
     "runtime": {
       "dotnet.7.0.14.7mm9hom2h7.js": "sha256-YWGUknGRzP/fgO6YjvCJKPVQNZAPEd6ll+rHfQEIW+I=",
       "dotnet.timezones.blat": "sha256-t5xviiOQTfAsF0UDhmcyalKiaehUmf/sqJl97tmPM0M=",
@@ -222,10 +222,10 @@
       "mscorlib.dll": "sha256-YcsJInaT/kw3Vrm+SESegPxvT/Lr9RE6rE/KnxWIIc0=",
       "netstandard.dll": "sha256-TztlSRjADgiEABbiAMdWZpHrUVd8wnRtQRAvlwmRP/4=",
       "System.Private.CoreLib.dll": "sha256-BAhrZ8Zg3cJKQipxdzqQo+9jtPkOkRx1ou3oIhDohtk=",
-      "MatchScore.dll": "sha256-CcSGSg46BZmmY0nHZOn/AuCmGmOSJt4P3utMf3aLUek="
+      "MatchScore.dll": "sha256-hqRyv+dufbvDTD/LbKBNu6Y9J3v5Wc+kLm2EFGR90Zs="
     },
     "pdb": {
-      "MatchScore.pdb": "sha256-ldyTKDXEYgDn4oUUWM4c4JZNsZKnn3djJ6251FaYRvY="
+      "MatchScore.pdb": "sha256-tzF/rkNP3WeRJcmMdnHFvoRWHVipCVkFQtaDlr74N0c="
     },
     "satelliteResources": {
       "cs": {
