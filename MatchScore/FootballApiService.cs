@@ -16,27 +16,6 @@ namespace MatchScore.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<Fixture>> GetFixturesByDateAsync(string date)
-        {
-            try
-            {
-                var response = await _httpClient.GetFromJsonAsync<FixtureResponse>($"https://api-football-v1.p.rapidapi.com/v3/fixtures?date={date}");
-                if (response?.Response != null)
-                {
-                    return response.Response;
-                }
-                else
-                {
-                    return new List<Fixture>();
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                return new List<Fixture>();
-            }
-        }
-
         public async Task<List<Fixture>> GetFixturesByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             var fixtures = new List<Fixture>();
@@ -104,24 +83,6 @@ namespace MatchScore.Services
                 Console.WriteLine($"An error occurred fetching lineups: {ex.Message}");
                 return null;
             }
-        }
-
-        public async Task<List<Fixture>> GetFixturesByClubAsync(int clubId)
-        {
-            try
-            {
-                var response = await _httpClient.GetFromJsonAsync<FixtureResponse>($"https://api-football-v1.p.rapidapi.com/v3/fixtures?team={clubId}");
-                if (response?.Response != null)
-                {
-                    return response.Response;
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"An error occurred fetching fixtures for club {clubId}: {ex.Message}");
-            }
-
-            return new List<Fixture>();
         }
 
         public async Task<List<MatchEvent>> GetMatchEventsAsync(int matchId)

@@ -1,8 +1,13 @@
 {
   "ExpandedNodes": [
     "",
+    "\\MatchScore.Tests",
+    "\\MatchScore.Tests\\obj\\Release\\net8.0",
+    "\\obj",
+    "\\obj\\Release",
+    "\\obj\\Release\\net7.0",
     "\\Pages"
   ],
-  "SelectedNode": "\\Pages\\Index.razor",
+  "SelectedNode": "\\MatchScore.Tests\\UnitTest1.cs",
   "PreviewInSolutionExplorer": false
 }
