@@ -13,6 +13,14 @@
       "PackagePath": "staticwebassets\\css\\app.css"
     },
     {
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\images\\match-score.webp",
+      "PackagePath": "staticwebassets\\images\\match-score.webp"
+    },
+    {
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\images\\world-flag.jpg",
+      "PackagePath": "staticwebassets\\images\\world-flag.jpg"
+    },
+    {
       "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\index.html",
       "PackagePath": "staticwebassets\\index.html"
     },

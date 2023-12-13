@@ -1,11 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
 h1:focus {
     outline: none;
 }
 
 body {
     overflow-x: hidden;
+    background-color: #e6ebe5;
+    font-family: 'DM Sans', sans-serif;
 }
 
+.table-header {
+    text-align: left;
+}
+
+.league-info {
+    display: flex;
+    align-items: center; 
+    justify-content: flex-start; 
+}
 
 #blazor-error-ui {
     background: lightyellow;
@@ -37,43 +50,52 @@ body {
     }
 
 .matches-table {
-    width: 100vw;
+    width: 100%;
     margin: 0 auto;
     border-collapse: collapse;
-    display: flex;
-    justify-content: space-between;
+    vertical-align: middle;
 }
 
     .matches-table tr {
-        text-align: center;
+        display: table-row;
     }
 
     .matches-table td {
         padding: 8px;
         border-bottom: 1px solid #ddd;
         vertical-align: middle;
-        display: table-cell;
     }
 
 .minute-display {
-    text-align: center;
-    width: 20px;
+    width: 50px; 
 }
 
 .score-cell {
+    width: 120px;
     text-align: center;
-    width: 100px;
-    flex: none;
+    cursor: pointer;
+}
+
+.home-team-cell, .away-team-cell {
+    gap: 8px;
+    cursor: pointer;
 }
 
 .home-team-cell {
     text-align: right;
-    width: 30vw;
+    vertical-align: middle;
 }
 
 .away-team-cell {
     text-align: left;
-    width: 30vw;
+    vertical-align: middle;
+}
+
+
+.toggle-bar {
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px; 
 }
 
 .matches-table img {
@@ -123,6 +145,7 @@ body {
 }
 
 .team-stats-container {
+    text-align: center;
     flex-direction: row;
     justify-content: center;
     display: flex;
@@ -141,10 +164,10 @@ body {
     display: inline-flex;
     flex-direction: column;
     min-width: max-content;
-    background: #fff;
+    background-color: #e6ebe5;
     padding: 10px;
     overflow-y: auto;
-    border-right: 1px solid #ffc107;
+    border-right: 1px solid #fe6700;
 }
 
 .content {
@@ -168,6 +191,7 @@ body {
 
 .country-flag {
     height: 20px;
+    width: 27px;
     margin-right: 10px;
 }
 
@@ -186,6 +210,7 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
+    cursor: pointer;
 }
 
 .league-logo {
@@ -197,6 +222,19 @@ body {
 
 .league-name {
     text-align: left;
+}
+
+.league-logo-2 {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.league-name-2 {
+    text-align: left;
+    font-size: x-large;
 }
 
 .league-logo-container {
@@ -213,16 +251,17 @@ body {
 .fixture-date {
     margin: 20px;
     padding: 10px;
-    background-color: #f8f9fa;
-    border-left: 3px solid #ffc107;
+    background-color: #e6ebe5;
+    border-left: 3px solid #fe6700;
     color: #6c757d;
 }
 
-.no-data-message p {
+.no-data-message {
+    width: 3000px;
     margin: 20px;
     padding: 10px;
-    background-color: #f8f9fa;
-    border-left: 3px solid #ffc107;
+    background-color: #e6ebe5;
+    border-left: 3px solid #fe6700;
     color: #6c757d;
 }
 
@@ -249,6 +288,7 @@ body {
 .layout-wrapper {
     display: flex;
     min-height: 100vh;
+    background-color: #e6ebe5;
 }
 
 
@@ -277,6 +317,7 @@ body {
     text-align: left;
     align-items: flex-start;
     margin-right: 13vw;
+    margin-left: 150px;
 }
 
 .away-lineup .team-lineup-info {
@@ -294,7 +335,7 @@ body {
     width: 77vw;
     text-align: left;
     padding: 10px;
-    background-color: #f2f2f2;
+    background-color: #e6ebe5;
     border: none;
     cursor: pointer;
     font-size: 16px;
@@ -302,7 +343,7 @@ body {
 
 .collapsible-content {
     width: 100%;
-    background-color: #fff;
+    background-color: #e6ebe5;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
 }
@@ -313,8 +354,9 @@ body {
 
 .favourite-button {
     background: none;
-    border: none; 
-    padding: 0; 
+    border: none;
+    padding: 0;
+    cursor: pointer;
 }
 
 .spinner {
@@ -322,9 +364,21 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border-left-color: #09f;
+    border-left-color: #fe6700;
     animation: spin 1s ease infinite;
     margin-left: auto;
+}
+
+.spinner-2 {
+    border: 8px solid rgba(0, 0, 0, 0.1);
+    width: 72px;
+    height: 72px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    border-left-color: #fe6700;
+    animation: spin 1s ease infinite;
 }
 
 @keyframes spin {
@@ -345,4 +399,17 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.player-subbed-out {
+    color: red; 
+}
+
+.player-subbed-in {
+    color: green;
+}
+
+.match-score {
+    height: 200px;
+    width: 200px;
 }

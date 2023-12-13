@@ -222,6 +222,8 @@ namespace MatchScore.Models
     {
         [JsonPropertyName("player")]
         public Player? Player { get; set; }
+        [JsonPropertyName("id")]
+        public int? Id { get; set; }
     }
 
     public class Player
@@ -263,7 +265,55 @@ namespace MatchScore.Models
         public string? ClubName { get; set; }
     }
 
-        public class League
+    public class MatchEvent
+    {
+        [JsonPropertyName("time")]
+        public Time? Time { get; set; }
+
+        [JsonPropertyName("team")]
+        public Team? Team { get; set; }
+
+        [JsonPropertyName("player")]
+        public Player? Player { get; set; }
+
+        [JsonPropertyName("assist")]
+        public Player? Assist { get; set; }
+
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+
+        [JsonPropertyName("detail")]
+        public string? Detail { get; set; }
+    }
+
+    public class MatchEventResponse
+    {
+        [JsonPropertyName("response")]
+        public List<MatchEvent>? Response { get; set; }
+    }
+
+    public class Time
+    {
+        [JsonPropertyName("elapsed")]
+        public int Elapsed { get; set; }
+
+        [JsonPropertyName("extra")]
+        public int? Extra { get; set; }
+    }
+
+    public class Team
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("logo")]
+        public string Logo { get; set; }
+    }
+
+    public class League
     {
         public int Id { get; set; }
         public string? Name { get; set; }
@@ -277,14 +327,6 @@ namespace MatchScore.Models
     {
         public Team? Home { get; set; }
         public Team? Away { get; set; }
-    }
-
-    public class Team
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Logo { get; set; }
-        public bool? Winner { get; set; }
     }
 
     public class Goals
