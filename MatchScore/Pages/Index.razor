@@ -65,9 +65,9 @@
         @if (!showingFavourites) {
             @if (selectedLeagueId.HasValue && !showingFavourites)
             {
-                var selectedLeague = groupedFixtures.SelectMany(g => g.Value)
+                var selectedLeague = groupedFixtures?.SelectMany(g => g.Value)
                 .Select(f => f.League)
-                .FirstOrDefault(l => l.Id == selectedLeagueId);
+                .FirstOrDefault(l => l?.Id == selectedLeagueId);
 
                 @if (selectedLeague != null)
                 {
@@ -183,15 +183,14 @@
                                                                             <h6>Starting XI</h6>
                                                                             @foreach (var player in lineup.StartXI)
                                                                             {
-                                                                                var playerEvents = matchEvents.Where(e => e.Player.Id == player.Player.Id).ToList();
+                                                                                var playerEvents = matchEvents.Where(e => e?.Player?.Id == player?.Player?.Id).ToList();
                                                                                 string playerClass = "";
                                                                                 string subDetailOut = "";
                                                                                 string subDetailIn = "";
-                                                                                string substitutionIcon = "";
 
                                                                                 <div class="@playerClass">
                                                                                     <div class="player-info">
-                                                                                        @if (match.Teams.Away.Id == lineup.Team.Id)
+                                                                                        @if (match?.Teams?.Away.Id == lineup?.Team?.Id)
                                                                                         {
                                                                                             @foreach (var evt in playerEvents)
                                                                                             {
@@ -199,9 +198,9 @@
                                                                                             }
                                                                                         }
 
-                                                                                        @player.Player.Name @player.Player.Number
+                                                                                        @player?.Player?.Name @player?.Player?.Number
 
-                                                                                        @if (match.Teams.Home.Id == lineup.Team.Id)
+                                                                                        @if (match?.Teams?.Home.Id == lineup?.Team?.Id)
                                                                                         {
                                                                                             @foreach (var evt in playerEvents)
                                                                                             {
@@ -223,14 +222,13 @@
                                                                             <h6>Substitutes</h6>
                                                                             @foreach (var sub in lineup.Substitutes)
                                                                             {
-                                                                                var playerEvents = matchEvents.Where(e => e.Player.Id == sub.Player.Id).ToList();
+                                                                                var playerEvents = matchEvents.Where(e => e?.Player?.Id == sub?.Player?.Id).ToList();
                                                                                 string playerClass = "";
                                                                                 string subDetailOut = "";
                                                                                 string subDetailIn = "";
-                                                                                string substitutionIcon = "";
                                                                                 <div class="@playerClass">
                                                                                     <div class="player-info">
-                                                                                        @if (match.Teams.Away.Id == lineup.Team.Id)
+                                                                                        @if (match?.Teams?.Away.Id == lineup?.Team?.Id)
                                                                                         {
                                                                                             @foreach (var evt in playerEvents)
                                                                                             {
@@ -238,9 +236,9 @@
                                                                                             }
                                                                                         }
 
-                                                                                        @sub.Player.Name @sub.Player.Number
+                                                                                        @sub?.Player?.Name @sub?.Player?.Number
 
-                                                                                        @if (match.Teams.Home.Id == lineup.Team.Id)
+                                                                                        @if (match?.Teams?.Home.Id == lineup?.Team?.Id)
                                                                                         {
                                                                                             @foreach (var evt in playerEvents)
                                                                                             {
@@ -274,11 +272,11 @@
                                                 @if (statsVisible)
                                                 {
                                                     <div class="team-stats-container">
-                                                        @if (matchDetails.TryGetValue(match.Details?.Id ?? -1, out var statsResponse) && statsResponse.Response.Any())
+                                                        @if (matchDetails.TryGetValue(match?.Details?.Id ?? -1, out var statsResponse) && statsResponse.Response.Any())
                                                         {
                                                             @foreach (var teamStats in statsResponse.Response)
                                                             {
-                                                                <div class="team-stats @(teamStats.Team?.Id == match.Teams?.Home?.Id ? "home-team" : "away-team")">
+                                                                <div class="team-stats @(teamStats.Team?.Id == match?.Teams?.Home?.Id ? "home-team" : "away-team")">
                                                                     <img src="@teamStats.Team?.Logo" alt="@teamStats.Team?.Name Logo" />
                                                                     <h3>@teamStats.Team?.Name</h3>
                                                                     @foreach (var stat in teamStats.Statistics)
@@ -380,15 +378,14 @@
                                                                             <h6>Starting XI</h6>
                                                                             @foreach (var player in lineup.StartXI)
                                                                             {
-                                                                                var playerEvents = matchEvents.Where(e => e.Player.Id == player.Player.Id).ToList();
+                                                                                var playerEvents = matchEvents.Where(e => e?.Player?.Id == player?.Player?.Id).ToList();
                                                                                 string playerClass = "";
                                                                                 string subDetailOut = "";
                                                                                 string subDetailIn = "";
-                                                                                string substitutionIcon = "";
 
                                                                                 <div class="@playerClass">
                                                                                     <div class="player-info">
-                                                                                        @if (match.Teams.Away.Id == lineup.Team.Id)
+                                                                                        @if (match?.Teams?.Away.Id == lineup?.Team?.Id)
                                                                                         {
                                                                                             @foreach (var evt in playerEvents)
                                                                                             {
@@ -396,9 +393,9 @@
                                                                                             }
                                                                                         }
 
-                                                                                        @player.Player.Name @player.Player.Number
+                                                                                        @player?.Player?.Name @player?.Player?.Number
 
-                                                                                        @if (match.Teams.Home.Id == lineup.Team.Id)
+                                                                                        @if (match?.Teams?.Home.Id == lineup?.Team?.Id)
                                                                                         {
                                                                                             @foreach (var evt in playerEvents)
                                                                                             {
@@ -420,14 +417,13 @@
                                                                             <h6>Substitutes</h6>
                                                                             @foreach (var sub in lineup.Substitutes)
                                                                             {
-                                                                                var playerEvents = matchEvents.Where(e => e.Player.Id == sub.Player.Id).ToList();
+                                                                                var playerEvents = matchEvents.Where(e => e?.Player?.Id == sub?.Player?.Id).ToList();
                                                                                 string playerClass = "";
                                                                                 string subDetailOut = "";
                                                                                 string subDetailIn = "";
-                                                                                string substitutionIcon = "";
                                                                                 <div class="@playerClass">
                                                                                     <div class="player-info">
-                                                                                        @if (match.Teams.Away.Id == lineup.Team.Id)
+                                                                                        @if (match?.Teams?.Away.Id == lineup?.Team?.Id)
                                                                                         {
                                                                                             @foreach (var evt in playerEvents)
                                                                                             {
@@ -435,9 +431,9 @@
                                                                                             }
                                                                                         }
 
-                                                                                        @sub.Player.Name @sub.Player.Number
+                                                                                        @sub?.Player?.Name @sub?.Player?.Number
 
-                                                                                        @if (match.Teams.Home.Id == lineup.Team.Id)
+                                                                                        @if (match?.Teams?.Home.Id == lineup?.Team?.Id)
                                                                                         {
                                                                                             @foreach (var evt in playerEvents)
                                                                                             {
@@ -471,11 +467,11 @@
                                                 @if (statsVisible)
                                                 {
                                                     <div class="team-stats-container">
-                                                        @if (matchDetails.TryGetValue(match.Details?.Id ?? -1, out var statsResponse) && statsResponse.Response.Any())
+                                                        @if (matchDetails.TryGetValue(match?.Details?.Id ?? -1, out var statsResponse) && statsResponse.Response.Any())
                                                         {
                                                             @foreach (var teamStats in statsResponse.Response)
                                                             {
-                                                                <div class="team-stats @(teamStats.Team?.Id == match.Teams?.Home?.Id ? "home-team" : "away-team")">
+                                                                <div class="team-stats @(teamStats.Team?.Id == match?.Teams?.Home?.Id ? "home-team" : "away-team")">
                                                                     <img src="@teamStats.Team?.Logo" alt="@teamStats.Team?.Name Logo" />
                                                                     <h3>@teamStats.Team?.Name</h3>
                                                                     @foreach (var stat in teamStats.Statistics)
@@ -588,7 +584,7 @@
         {
             foreach (var fixture in fixturesOnDate)
             {
-                if (fixture.Details.Status.Short == "1H" || fixture.Details.Status.Short == "2H")
+                if (fixture?.Details?.Status?.Short == "1H" || fixture?.Details?.Status?.Short == "2H")
                 {
                     var matchStartTime = fixture.Details.Date.ToUniversalTime();
                     var elapsed = (int)(now - matchStartTime).TotalMinutes;
@@ -680,8 +676,8 @@
             }
 
             var leaguesWithMatchesToday = fixtures
-                .Where(f => f.Details.Date.Date == startDate)
-                .Select(f => f.League.Id)
+                .Where(f => f?.Details?.Date.Date == startDate)
+                .Select(f => f?.League?.Id)
                 .Distinct()
                 .ToList();
 
@@ -694,7 +690,7 @@
                 .GroupBy(f => f.League.Country)
                 .ToDictionary(
                     g => g.Key,
-                    g => g.GroupBy(f => f.League.Id)
+                    g => g.GroupBy(f => f?.League?.Id)
                           .Where(lg => leaguesWithMatchesToday.Contains(lg.Key))
                           .SelectMany(lg => lg)
                           .ToList()
@@ -875,8 +871,8 @@
 
         return groupedFixtures
             .SelectMany(kv => kv.Value)
-            .Where(f => f.League.Id == selectedLeagueId.Value
-                        && f.Details.Date >= startDate
+            .Where(f => f?.League?.Id == selectedLeagueId.Value
+                        && f?.Details?.Date >= startDate
                         && f.Details.Date <= endDate)
             .OrderBy(f => f.Details)
             .ToList();
@@ -928,7 +924,7 @@
         var standingsResponse = await FootballApiService.GetLeagueStandingsAsync(leagueId, season);
         if (standingsResponse != null && standingsResponse.Any())
         {
-            leagueStandings = standingsResponse.First().League.Standings.FirstOrDefault() ?? new List<Standing>();
+            leagueStandings = standingsResponse?.First().League?.Standings?.FirstOrDefault() ?? new List<Standing>();
         }
         else
         {
@@ -1046,7 +1042,7 @@
             var fixtures = await FootballApiService.GetFixturesByDateRangeAsync(startDate, endDate);
 
             leagueFixturesByDate = fixtures
-                .Where(f => f.League.Id == selectedLeagueId.Value)
+                .Where(f => f?.League?.Id == selectedLeagueId.Value)
                 .GroupBy(f => f.Details.Date.Date)
                 .ToDictionary(g => g.Key, g => g.ToList());
         }
@@ -1064,7 +1060,7 @@
 
     private string GetPlayerClass(LineupPlayer player, List<MatchEvent> matchEvents)
     {
-        var playerEvent = matchEvents.FirstOrDefault(e => e.Player.Id == player.Id);
+        var playerEvent = matchEvents.FirstOrDefault(e => e?.Player?.Id == player.Id);
         if (playerEvent != null && playerEvent.Type == "subst")
         {
             return "player-subbed";
@@ -1074,18 +1070,18 @@
 
     private bool HasScored(LineupPlayer player, List<MatchEvent> matchEvents)
     {
-        return matchEvents.Any(e => e.Player.Id == player.Id && e.Type == "Goal");
+        return matchEvents.Any(e => e?.Player?.Id == player.Id && e.Type == "Goal");
     }
 
     private bool HasCard(LineupPlayer player, List<MatchEvent> matchEvents, string cardType)
     {
-        return matchEvents.Any(e => e.Player.Id == player.Id && e.Detail == cardType);
+        return matchEvents.Any(e => e?.Player?.Id == player.Id && e.Detail == cardType);
     }
 
     private bool IsSubstituted(LineupPlayer player, List<MatchEvent> matchEvents)
     {
-        bool isSubbedOut = matchEvents.Any(e => e.Player.Id == player.Player.Id && e.Type == "subst" && e.Detail == "Substitution out");
-        bool isSubbedIn = matchEvents.Any(e => e.Player.Id == player.Player.Id && e.Type == "subst" && e.Detail == "Substitution in");
+        bool isSubbedOut = matchEvents.Any(e => e?.Player?.Id == player?.Player?.Id && e.Type == "subst" && e.Detail == "Substitution out");
+        bool isSubbedIn = matchEvents.Any(e => e?.Player?.Id == player?.Player?.Id && e.Type == "subst" && e.Detail == "Substitution in");
 
         return isSubbedOut || isSubbedIn;
     }
@@ -1110,13 +1106,13 @@
             if (evt.Detail == "Substitution out")
             {
                 playerClass = "player-subbed-out";
-                subDetailOut = $"Subbed out at {evt.Time.Elapsed}'";
+                subDetailOut = $"Subbed out at {evt?.Time?.Elapsed}'";
                 substitutionIcon = "<i class=\"fas fa-exchange-alt\" title=\"Substituted out\"></i>";
             }
             if (evt.Detail == "Substitution in")
             {
                 playerClass = "player-subbed-in";
-                subDetailIn = $"Subbed in at {evt.Time.Elapsed}'";
+                subDetailIn = $"Subbed in at {evt?.Time?.Elapsed}'";
                 substitutionIcon = "<i class=\"fas fa-exchange-alt\" title=\"Substituted in\"></i>";
             }
         }

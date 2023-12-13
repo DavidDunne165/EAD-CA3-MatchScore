@@ -1,27 +1,27 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\bin\\Debug\\net7.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore\\bin\\Debug\\net7.0\\wwwroot\\_framework\\blazor.webassembly.js",
       "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
     },
     {
-      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\obj\\Debug\\net7.0\\compressed\\oxzyrwoz0e.gz",
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore\\obj\\Debug\\net7.0\\compressed\\oxzyrwoz0e.gz",
       "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
     },
     {
-      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\css\\app.css",
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore\\wwwroot\\css\\app.css",
       "PackagePath": "staticwebassets\\css\\app.css"
     },
     {
-      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\images\\match-score.webp",
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore\\wwwroot\\images\\match-score.webp",
       "PackagePath": "staticwebassets\\images\\match-score.webp"
     },
     {
-      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\images\\world-flag.jpg",
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore\\wwwroot\\images\\world-flag.jpg",
       "PackagePath": "staticwebassets\\images\\world-flag.jpg"
     },
     {
-      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore\\wwwroot\\index.html",
+      "Id": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore\\wwwroot\\index.html",
       "PackagePath": "staticwebassets\\index.html"
     },
     {
