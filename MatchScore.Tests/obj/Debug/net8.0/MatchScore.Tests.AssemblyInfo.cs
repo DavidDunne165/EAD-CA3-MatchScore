@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MatchScore.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc9bb1e8d2704bf980e7abcf5dfca367f5869194")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd592dad3091d816ebed1ddb96b0a09b30fa9d0f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MatchScore.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MatchScore.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

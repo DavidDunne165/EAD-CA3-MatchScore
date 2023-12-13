@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MatchScore.Tests
-build_property.ProjectDir = C:\Users\David\Desktop\year4\EAD\CA3\MatchScore\EAD-CA3-MatchScore-main\MatchScore.Tests\
+build_property.ProjectDir = C:\Users\David\Desktop\year4\EAD\CA3\EAD-CA3-MatchScore\MatchScore.Tests\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

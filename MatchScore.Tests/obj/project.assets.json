@@ -5994,11 +5994,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore.Tests\\MatchScore.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore.Tests\\MatchScore.Tests.csproj",
       "projectName": "MatchScore.Tests",
-      "projectPath": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore.Tests\\MatchScore.Tests.csproj",
+      "projectPath": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore.Tests\\MatchScore.Tests.csproj",
       "packagesPath": "C:\\Users\\David\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\MatchScore\\EAD-CA3-MatchScore-main\\MatchScore.Tests\\obj\\",
+      "outputPath": "C:\\Users\\David\\Desktop\\year4\\EAD\\CA3\\EAD-CA3-MatchScore\\MatchScore.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
