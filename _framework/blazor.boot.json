@@ -1,7 +1,7 @@
 {
   "entryAssembly": "MatchScore",
   "resources": {
-    "hash": "sha256-ie2P9nXyHqa5SRtj5gemU6e/S2KyM1nZDK9vsVgKTEk=",
+    "hash": "sha256-vuaeuxtv5+ttVVE2BXIM/J/IJWA76PSkxxRr4JOxVus=",
     "runtime": {
       "dotnet.7.0.14.mikshhdjmu.js": "sha256-YWGUknGRzP/fgO6YjvCJKPVQNZAPEd6ll+rHfQEIW+I=",
       "dotnet.timezones.blat": "sha256-t5xviiOQTfAsF0UDhmcyalKiaehUmf/sqJl97tmPM0M=",
@@ -12,7 +12,7 @@
     },
     "assembly": {
       "Castle.Core.dll": "sha256-nFdirifyr+CRPo/6SU9wX/6WgGmapPt5wmEzRMkY7ig=",
-      "MatchScore.dll": "sha256-cUP0XmtXU3JUzXGjXCr7PWMaz+ce6h55ttd5NIb1MHk=",
+      "MatchScore.dll": "sha256-WjXX5rZmtHV19ba0E4vanm475hx8KVaza37HV80VNHc=",
       "Microsoft.AspNetCore.Components.dll": "sha256-8xPYu2AQPc2fUdw8BIFNkkFgsKN2PGKKjDoLv7xCRuo=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-6ivYICuvg911esD8SKGTJ7tUDPgCyJQUJ3vBedCBaXw=",
       "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-tkypxRakK4igpnN4l2432wyP7eQWuxUqgw8nOGQ9Z3c=",
