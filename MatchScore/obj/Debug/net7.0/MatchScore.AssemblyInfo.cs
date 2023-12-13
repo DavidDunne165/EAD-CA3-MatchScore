@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MatchScore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f9b7ed9d69a55f0a2d1bec8e3ea3246a40dd5f2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5fcec50fc728614af6a283168281762130d8930")]
 [assembly: System.Reflection.AssemblyProductAttribute("MatchScore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MatchScore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

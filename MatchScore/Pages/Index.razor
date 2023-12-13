@@ -280,7 +280,7 @@
                                                             {
                                                                 <div class="team-stats @(teamStats.Team?.Id == match.Teams?.Home?.Id ? "home-team" : "away-team")">
                                                                     <img src="@teamStats.Team?.Logo" alt="@teamStats.Team?.Name Logo" />
-                                                                    <h2>@teamStats.Team?.Name</h2>
+                                                                    <h3>@teamStats.Team?.Name</h3>
                                                                     @foreach (var stat in teamStats.Statistics)
                                                                     {
                                                                         <p><strong>@stat.Type</strong><br> @(stat.Value?.ToString() ?? "0")</p>
@@ -477,7 +477,7 @@
                                                             {
                                                                 <div class="team-stats @(teamStats.Team?.Id == match.Teams?.Home?.Id ? "home-team" : "away-team")">
                                                                     <img src="@teamStats.Team?.Logo" alt="@teamStats.Team?.Name Logo" />
-                                                                    <h2>@teamStats.Team?.Name</h2>
+                                                                    <h3>@teamStats.Team?.Name</h3>
                                                                     @foreach (var stat in teamStats.Statistics)
                                                                     {
                                                                         <p><strong>@stat.Type</strong><br> @(stat.Value?.ToString() ?? "0")</p>
@@ -588,7 +588,6 @@
         {
             foreach (var fixture in fixturesOnDate)
             {
-                // Only update if the match is currently in the first or second half.
                 if (fixture.Details.Status.Short == "1H" || fixture.Details.Status.Short == "2H")
                 {
                     var matchStartTime = fixture.Details.Date.ToUniversalTime();
@@ -686,7 +685,6 @@
                 .Distinct()
                 .ToList();
 
-            // Group fixtures by date
             fixturesByDate = fixtures
                 .GroupBy(f => f.Details.Date.Date)
                 .ToDictionary(g => g.Key, g => g.ToList());
@@ -705,7 +703,6 @@
             groupedFixtures = fixturesGroupedByCountryAndLeague;
 
 
-            // Sort countries based on priority
             var priorityCountries = new List<string> { "England", "Spain", "Italy", "Germany", "France", "Ireland", "World" };
 
             groupedFixtures = groupedFixtures
@@ -714,10 +711,10 @@
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             foreach (var country in groupedFixtures.Keys)
             {
-                expandedCountries[country] = false; // Countries collapsed by default
+                expandedCountries[country] = false; 
                 foreach (var league in groupedFixtures[country].Select(f => f.League.Id).Distinct())
                 {
-                    expandedLeagues[(country, league)] = false; // Leagues collapsed by default
+                    expandedLeagues[(country, league)] = false;
                 }
             }
         }
@@ -796,9 +793,17 @@
 
     private string GetMinuteDisplay(Fixture fixture)
     {
-        if (fixture?.Details?.Status?.Short == "1H" || fixture?.Details?.Status?.Short == "2H" || fixture?.Details?.Status?.Short == "HT")
+        if (fixture?.Details?.Status?.Short == "1H" || fixture?.Details?.Status?.Short == "2H")
         {
             return $"{fixture.Details?.Status?.Elapsed}'";
+        }
+        else if (fixture?.Details?.Status?.Short == "FT")
+        {
+            return "FT";
+        }
+        else if (fixture?.Details?.Status?.Short == "HT")
+        {
+            return "HT";
         }
         else
         {

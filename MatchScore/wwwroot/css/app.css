@@ -67,16 +67,18 @@ body {
     }
 
 .minute-display {
-    width: 50px; /* Adjust width as needed */
+    width: 50px; 
 }
 
 .score-cell {
     width: 120px;
-    text-align: center;/* Adjust width as needed for a wider cell */
+    text-align: center;
+    cursor: pointer;
 }
 
 .home-team-cell, .away-team-cell {
     gap: 8px;
+    cursor: pointer;
 }
 
 .home-team-cell {
@@ -208,6 +210,7 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
+    cursor: pointer;
 }
 
 .league-logo {
@@ -351,8 +354,9 @@ body {
 
 .favourite-button {
     background: none;
-    border: none; 
-    padding: 0; 
+    border: none;
+    padding: 0;
+    cursor: pointer;
 }
 
 .spinner {
